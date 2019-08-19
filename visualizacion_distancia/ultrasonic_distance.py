@@ -76,8 +76,7 @@ if __name__ == '__main__':
         while True:
             dist = distance()
             print("Measured Distance = %.1f cm" % dist)
-            time.sleep(2)
-            if(dist >= 34 and dist <= 36):
+            if(dist >= 33 and dist <= 38):
                 if(estado != 0):
                     while True:
                         if(net_is_up() == 0):
@@ -91,13 +90,9 @@ if __name__ == '__main__':
                             print(mycursor.rowcount, "record affected.")
                             time.sleep(1)
                             #END of mysql
-                            #Start Led
-                            #os.system("gpio -g mode 25 in")
-                            #print("apagado")
-                            #End Led
                             estado = 0
                             break
-                GPIO.output(25, False)
+                    GPIO.output(25, False)
             else:
                 if(estado != 1):
                     while True:
@@ -112,14 +107,10 @@ if __name__ == '__main__':
                             print(mycursor.rowcount, "record affected.")
                             time.sleep(1)
                             #END of mysql
-                            #Start led
-                            os.system("gpio -g mode 25 out")
-                            #print("encendido")
-                            #End led
                             estado = 1
                             break
                     GPIO.output(25, True)
- 
+            time.sleep(3)
         # Reset by pressing CTRL + C
     except KeyboardInterrupt:
         print("Measurement stopped by User")
