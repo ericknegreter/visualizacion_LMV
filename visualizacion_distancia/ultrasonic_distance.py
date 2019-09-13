@@ -10,14 +10,13 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 #set GPIO Pins
-GPIO_TRIGGER = 23
-GPIO_ECHO = 24
+GPIO_TRIGGER = 5 #23
+GPIO_ECHO = 6 #24
  
 #set GPIO direction (IN / OUT)
 GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
 GPIO.setup(GPIO_ECHO, GPIO.IN)
-GPIO.setup(25, GPIO.OUT)
-
+GPIO.setup(13, GPIO.OUT) #25
 #test host
 hosts = ('google.com', 'kernel.org', 'yahoo.com')
 localhost = ('10.0.5.246')
@@ -92,7 +91,8 @@ if __name__ == '__main__':
                             #END of mysql
                             estado = 0
                             break
-                    GPIO.output(25, False)
+                    #Led End
+                    GPIO.output(13, False) #13
             else:
                 if(estado != 1):
                     while True:
@@ -109,9 +109,15 @@ if __name__ == '__main__':
                             #END of mysql
                             estado = 1
                             break
-                    GPIO.output(25, True)
-            time.sleep(3)
+                    #Led Start
+                    GPIO.output(13, True) #25
+            time.sleep(5)
+
         # Reset by pressing CTRL + C
     except KeyboardInterrupt:
         print("Measurement stopped by User")
+    except ValueError:
+        print("Measurement stopped by Error")
+    except OSError as err:
+        print("OS error: {0}".format(err))
         #GPIO.cleanup()

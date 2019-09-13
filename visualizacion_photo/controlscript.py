@@ -115,19 +115,7 @@ def listen_welcome():
             print("Trying to recognize")
             x = r.recognize_google(audio, language="es-mx")
             x = x.split(" ")
-            print(x)
-            #Borrar una vez que pase el 6 de Junio
-            if len(x) != 0:
-                GPIO.output(20, False)
-                y = 0
-                while y <= 5:
-                    GPIO.output(16, True)
-                    time.sleep(1)
-                    GPIO.output(16, False)
-                    time.sleep(1)
-                    y+=1
-                GPIO.output(20, True)
-            #------------------------------------
+            #print(x)
             if len(x) != 2:
                 return False, ""
             frase, nombre, estado = get_name(x)
