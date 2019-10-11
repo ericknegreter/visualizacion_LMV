@@ -19,13 +19,17 @@ import RPi.GPIO as GPIO
 #Library to read CSV
 import csv
 
+#Library to export data
+import paramiko
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(12, GPIO.OUT)
-GPIO.setup(20, GPIO.OUT)
+GPIO.setup(21, GPIO.OUT)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(16, GPIO.OUT)
 
+proxy = None
 hosts = ('google.com', 'kernel.org', 'yahoo.com')
 localhost = ('10.0.5.246')
 
@@ -66,7 +70,7 @@ def get_name(Name):
             break
     return Name[0], "", False
 
-def store(path, name, person):
+def store(path, name, person, nameservidor):
     while True:
         if(net_is_up() == 0):
             #Connection and insert with mysql complete
@@ -77,6 +81,14 @@ def store(path, name, person):
             mycursor.execute(sql, val)
             mydb.commit()
             print(mycursor.rowcount, "record inserted")
+            #Almacenar la foto en servidor para mostrar en imagen
+            client = paramiko.SSHClient()
+            client.load_system_host_keys()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            client.connect('10.0.5.246', username='lmv-codedata', password='Laboratorio', sock=proxy)
+            ftp_client = client.open_sftp()
+            ftp_client.put(nameservidor, '/var/www/html/ENTRADA-LMV/Images_Access/'+nameservidor)
+            ftp_client.close()
             break
 
 def take_photo(name):
@@ -86,14 +98,10 @@ def take_photo(name):
     currentdate = datetime.datetime.now().strftime("%Y-%m-%d_%H%M")
     real_path = currentdate +".jpg"
     abs_file_path = os.path.join(script_dir, real_path)
-    GPIO.output(20, False)
+    GPIO.output(21, False)
     GPIO.output(16, True)
     time.sleep(2)
-    #print("--------------------------------------------------")
-    #print(direc)
-    #print(abs_file_path)
-    #print("--------------------------------------------------")
-    store(direc, abs_file_path, name)
+    store(direc, abs_file_path, name, real_path)
     GPIO.output(16, False)
     time.sleep(2)
     return False
@@ -102,15 +110,15 @@ def listen_welcome():
     r = sr.Recognizer()
     m = sr.Microphone()
     with m as source:
-        print("Adjusting noise")
-        r.adjust_for_ambient_noise(source, duration=-1)
-        print("Say something!")
         try:
-            GPIO.output(20, False)
+            print("Adjusting noise")
+            r.adjust_for_ambient_noise(source, duration=-1)
+            print("Say something!")
+            GPIO.output(21, False)
             GPIO.output(12, True)
             audio = r.listen(source, timeout=5, phrase_time_limit=8)
             GPIO.output(12, False)
-            GPIO.output(20, True)
+            GPIO.output(21, True)
             print("LISTENED")
             print("Trying to recognize")
             x = r.recognize_google(audio, language="es-mx")
@@ -132,6 +140,8 @@ def listen_welcome():
             return False, ""
         except Exception as e:
             print(e)
+            return False, ""
+        except LookupError:
             return False, ""
         except UnicodeDecodeError:
             return False, ""
