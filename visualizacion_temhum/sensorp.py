@@ -7,7 +7,7 @@ import subprocess, datetime
 sensor=Adafruit_DHT.DHT11
 
 # Set GPIO sensor is connected to
-gpio=7
+gpio=17
 
 #test host
 hosts = ('google.com', 'kernel.org', 'yahoo.com')
