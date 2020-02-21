@@ -69,58 +69,57 @@ def distance():
  
     return distance
  
-while True:
-    if __name__ == '__main__':
-        try:
-            estado = 0
-            while True:
-                dist = distance()
-                print("Measured Distance = %.1f cm" % dist)
-                if(dist >= 33 and dist <= 38):
-                    if(estado != 0):
-                        while True:
-                            if(net_is_up() == 0):
-                                #Connection to database LMV and insert on registro table new field with mysql
-                                #registro
-                                mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="LABORATORIOT4", database="LMV")
-                                mycursor = mydb.cursor()
-                                sql = "UPDATE a_visualizacion SET estado = 0 WHERE dispositivo='transfer'"
-                                mycursor.execute(sql)
-                                mydb.commit()
-                                print(mycursor.rowcount, "record affected.")
-                                time.sleep(1)
-                                #END of mysql
-                                estado = 0
-                                break
-                        #Led End
-                        GPIO.output(25, False) #13
-                else:
-                    if(estado != 1):
-                        while True:
-                            if(net_is_up() == 0):
-                                #Connection to database LMV and insert on registro table new field with sql
-                                #registro
-                                mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="LABORATORIOT4", database="LMV")
-                                mycursor = mydb.cursor()
-                                sql = "UPDATE a_visualizacion SET estado = 1 WHERE dispositivo='transfer'"
-                                mycursor.execute(sql)
-                                mydb.commit()
-                                print(mycursor.rowcount, "record affected.")
-                                time.sleep(1)
-                                #END of mysql
-                                estado = 1
-                                break
-                        #Led Start
-                        GPIO.output(25, True) #25
-                time.sleep(5)
+if __name__ == '__main__':
+    try:
+        estado = 0
+        while True:
+            dist = distance()
+            print("Measured Distance = %.1f cm" % dist)
+            if(dist >= 33 and dist <= 38):
+                if(estado != 0):
+                    while True:
+                        if(net_is_up() == 0):
+                            #Connection to database LMV and insert on registro table new field with mysql
+                            #registro
+                            mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="LABORATORIOT4", database="LMV")
+                            mycursor = mydb.cursor()
+                            sql = "UPDATE a_visualizacion SET estado = 0 WHERE dispositivo='transfer'"
+                            mycursor.execute(sql)
+                            mydb.commit()
+                            print(mycursor.rowcount, "record affected.")
+                            time.sleep(1)
+                            #END of mysql
+                            estado = 0
+                            break
+                    #Led End
+                    GPIO.output(25, False) #13
+            else:
+                if(estado != 1):
+                    while True:
+                        if(net_is_up() == 0):
+                            #Connection to database LMV and insert on registro table new field with sql
+                            #registro
+                            mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="LABORATORIOT4", database="LMV")
+                            mycursor = mydb.cursor()
+                            sql = "UPDATE a_visualizacion SET estado = 1 WHERE dispositivo='transfer'"
+                            mycursor.execute(sql)
+                            mydb.commit()
+                            print(mycursor.rowcount, "record affected.")
+                            time.sleep(1)
+                            #END of mysql
+                            estado = 1
+                            break
+                    #Led Start
+                    GPIO.output(25, True) #25
+            time.sleep(5)
 
         # Reset by pressing CTRL + C
-        except KeyboardInterrupt:
-            print("Measurement stopped by User")
-        except ValueError:
-            print("Measurement stopped by Error")
-        except OSError as err:
-            print("OS error: {0}".format(err))
-        except:
-            print("No controlado")
+        #except KeyboardInterrupt:
+        #    print("Measurement stopped by User")
+    except ValueError:
+        print("Measurement stopped by Error")
+    except OSError as err:
+        print("OS error: {0}".format(err))
+        #except:
+        #    print("No controlado")
         #GPIO.cleanup()
