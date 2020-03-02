@@ -26,15 +26,12 @@ def ping(host):
 def net_is_up():
     print ("[%s] Checking if network is up..." % str(datetime.datetime.now()))
     
-    xstatus = 1
-    for h in hosts:
-        if ping(h):
-            if ping(localhost):
-                print ("[%s] Network is up!" % str(datetime.datetime.now()))
-                xstatus = 0
-                break
+    xstatus = 0
+    if ping(localhost):
+        print ("[%s] Network is up!" % str(datetime.datetime.now()))
+        xstatus = 1
         
-    if xstatus:
+    if not xstatus:
         time.sleep(10)
         print ("[%s] Network is down :(" % str(datetime.datetime.now()))
         time.sleep(25)
@@ -43,7 +40,7 @@ def net_is_up():
 
 while True:
     try:
-        if(net_is_up() == 0):
+        if(net_is_up()):
             mydb = mysql.connector.connect(host="10.0.5.246", user="LMV_ADMIN", passwd="MINIMOT4", database="LMV")
             mycursor = mydb.cursor()
             sql = "SELECT estado FROM a_visualizacion WHERE dispositivo = 'luz'"
@@ -52,13 +49,12 @@ while True:
             print(mycursor.rowcount, "record selected")
             for row in records:
                 estado = int(row[0])
-
+            mydb.close()
             if estado == 1:
                 GPIO.output(26, False)
-                #os.system('gpio -g mode 18 out')
             elif estado == 0:
                 GPIO.output(26, True)
-                #os.system('gpio -g mode 18 in')
+            mydb.close()
             break
     except mysql.connector.Error as err:
         print("Something went wrong: {}".format(err))
