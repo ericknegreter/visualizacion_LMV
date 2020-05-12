@@ -89,7 +89,7 @@ def store(path, name, person, nameservidor):
                 client = paramiko.SSHClient()
                 client.load_system_host_keys()
                 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                client.connect('10.0.5.246', username='lmv-codedata', password='Laboratorio', sock=proxy)
+                client.connect('10.0.5.246', port=19930, username='lmv-codedata', password='Laboratorio', sock=proxy)
                 ftp_client = client.open_sftp()
                 ftp_client.put(nameservidor, '/var/www/html/ENTRADA-LMV/Images_Access/'+nameservidor)
                 ftp_client.close()
