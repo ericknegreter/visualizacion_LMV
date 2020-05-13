@@ -37,7 +37,7 @@ proxy = None
 hosts = ('google.com', 'kernel.org', 'yahoo.com')
 localhost = ('10.0.5.246')
 
-with open('/home/pi/Documents/muestras_photo/seg.json', 'r', encoding='utf-8') as json_data:
+with open('/home/pi/Documents/visualizacion_photo/seg.json', 'r', encoding='utf-8') as json_data:
     vrb = json.load(json_data)
 
 def ping(host):
